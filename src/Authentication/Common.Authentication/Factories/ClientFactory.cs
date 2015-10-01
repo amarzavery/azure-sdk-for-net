@@ -43,7 +43,9 @@ namespace Microsoft.Azure.Common.Authentication.Factories
             }
 
             var creds = AzureSession.AuthenticationFactory.GetServiceClientCredentials(context);
-            TClient client = CreateCustomArmClient<TClient>(context.Environment.GetEndpointAsUri(endpoint), creds, new DelegatingHandler[]{});
+            TClient client = CreateCustomArmClient<TClient>(
+                context.Environment.GetEndpointAsUri(endpoint),
+                creds, new DelegatingHandler[]{ new RPRegistrationDelegatingHandler(this, context) });
 
             var subscriptionId = typeof(TClient).GetProperty("SubscriptionId");
             if (subscriptionId != null && context.Subscription != null)
@@ -91,6 +93,7 @@ namespace Microsoft.Azure.Common.Authentication.Factories
 
             SubscriptionCloudCredentials creds = AzureSession.AuthenticationFactory.GetSubscriptionCloudCredentials(context, endpoint);
             TClient client = CreateCustomClient<TClient>(creds, context.Environment.GetEndpointAsUri(endpoint));
+            client.AddHandlerToPipeline(new RPRegistrationDelegatingHandler(this, context));
 
             return client;
         }
@@ -237,5 +240,10 @@ namespace Microsoft.Azure.Common.Authentication.Factories
         }
 
         public List<ProductInfoHeaderValue> UserAgents { get; set; }
+
+        /// <summary>
+        /// Gets or sets action for registering a given resource provider.
+        /// </summary>
+        public Action<string, AzureContext> ResourceProviderRegistrationAction { get; set; }
     }
 }

@@ -91,6 +91,13 @@ namespace Microsoft.WindowsAzure.Commands.Common.Test.Mocks
             }
         }
 
+        public Action<string, AzureContext> ResourceProviderRegistrationAction
+        {
+            get { return null; }
+
+            set { }
+        }
+
         public TClient CreateArmClient<TClient>(AzureContext context, AzureEnvironment.Endpoint endpoint) where TClient : Rest.ServiceClient<TClient>
         {
             var creds = AzureSession.AuthenticationFactory.GetServiceClientCredentials(context);

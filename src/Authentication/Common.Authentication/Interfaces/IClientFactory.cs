@@ -45,5 +45,10 @@ namespace Microsoft.Azure.Common.Authentication
         void RemoveAction(Type actionType);
 
         List<ProductInfoHeaderValue> UserAgents { get; set; }
+
+        /// <summary>
+        /// Gets or sets action for registering a given resource provider.
+        /// </summary>
+        Action<string, AzureContext> ResourceProviderRegistrationAction { get; set; }
     }
 }
